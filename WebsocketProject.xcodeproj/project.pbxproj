@@ -12,6 +12,7 @@
 		8D7C6D6627C77F5E00AB231F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6527C77F5E00AB231F /* Assets.xcassets */; };
 		8D7C6D6927C77F5E00AB231F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6727C77F5E00AB231F /* LaunchScreen.storyboard */; };
 		8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */; };
+		8DC3B41027C7E9CA00523695 /* UIView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B40F27C7E9CA00523695 /* UIView+Extensions.swift */; };
 		E8F233D68F39488FC33DA00A /* Pods_WebsocketProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */; };
 /* End PBXBuildFile section */
 
@@ -24,6 +25,7 @@
 		8D7C6D6827C77F5E00AB231F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D7C6D6A27C77F5E00AB231F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
+		8DC3B40F27C7E9CA00523695 /* UIView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UIView+Extensions.swift"; sourceTree = "<group>"; };
 		967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebsocketProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9DCBC7E9AF41BB58098FE66 /* Pods-WebsocketProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebsocketProject.release.xcconfig"; path = "Target Support Files/Pods-WebsocketProject/Pods-WebsocketProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -61,6 +63,7 @@
 		8D7C6D5B27C77F5D00AB231F /* WebsocketProject */ = {
 			isa = PBXGroup;
 			children = (
+				8DC3B40E27C7E9B000523695 /* Utilities */,
 				8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */,
 				8D7C6D5C27C77F5D00AB231F /* AppDelegate.swift */,
 				8D7C6D5E27C77F5D00AB231F /* SceneDelegate.swift */,
@@ -69,6 +72,14 @@
 				8D7C6D6A27C77F5E00AB231F /* Info.plist */,
 			);
 			path = WebsocketProject;
+			sourceTree = "<group>";
+		};
+		8DC3B40E27C7E9B000523695 /* Utilities */ = {
+			isa = PBXGroup;
+			children = (
+				8DC3B40F27C7E9CA00523695 /* UIView+Extensions.swift */,
+			);
+			path = Utilities;
 			sourceTree = "<group>";
 		};
 		DDD3BC18363A508B4EFABEC4 /* Pods */ = {
@@ -204,6 +215,7 @@
 			files = (
 				8D7C6D5D27C77F5D00AB231F /* AppDelegate.swift in Sources */,
 				8D7C6D5F27C77F5D00AB231F /* SceneDelegate.swift in Sources */,
+				8DC3B41027C7E9CA00523695 /* UIView+Extensions.swift in Sources */,
 				8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

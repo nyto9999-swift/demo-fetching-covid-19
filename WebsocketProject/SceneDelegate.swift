@@ -7,6 +7,7 @@
 
 import UIKit
 
+
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -19,6 +20,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
              window?.windowScene = windowScene
              window?.makeKeyAndVisible()
              let vc = HomeViewController()
+             vc.view.backgroundColor = .systemBackground
              window?.rootViewController = UINavigationController(rootViewController: vc)
     }
 
