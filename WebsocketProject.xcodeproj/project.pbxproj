@@ -9,10 +9,9 @@
 /* Begin PBXBuildFile section */
 		8D7C6D5D27C77F5D00AB231F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C6D5C27C77F5D00AB231F /* AppDelegate.swift */; };
 		8D7C6D5F27C77F5D00AB231F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C6D5E27C77F5D00AB231F /* SceneDelegate.swift */; };
-		8D7C6D6127C77F5D00AB231F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6027C77F5D00AB231F /* ViewController.swift */; };
-		8D7C6D6427C77F5D00AB231F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6227C77F5D00AB231F /* Main.storyboard */; };
 		8D7C6D6627C77F5E00AB231F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6527C77F5E00AB231F /* Assets.xcassets */; };
 		8D7C6D6927C77F5E00AB231F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 8D7C6D6727C77F5E00AB231F /* LaunchScreen.storyboard */; };
+		8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */; };
 		E8F233D68F39488FC33DA00A /* Pods_WebsocketProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */; };
 /* End PBXBuildFile section */
 
@@ -21,11 +20,10 @@
 		8D7C6D5927C77F5D00AB231F /* WebsocketProject.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = WebsocketProject.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		8D7C6D5C27C77F5D00AB231F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		8D7C6D5E27C77F5D00AB231F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		8D7C6D6027C77F5D00AB231F /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
-		8D7C6D6327C77F5D00AB231F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		8D7C6D6527C77F5E00AB231F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		8D7C6D6827C77F5E00AB231F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8D7C6D6A27C77F5E00AB231F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewController.swift; sourceTree = "<group>"; };
 		967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebsocketProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9DCBC7E9AF41BB58098FE66 /* Pods-WebsocketProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebsocketProject.release.xcconfig"; path = "Target Support Files/Pods-WebsocketProject/Pods-WebsocketProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -63,10 +61,9 @@
 		8D7C6D5B27C77F5D00AB231F /* WebsocketProject */ = {
 			isa = PBXGroup;
 			children = (
+				8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */,
 				8D7C6D5C27C77F5D00AB231F /* AppDelegate.swift */,
 				8D7C6D5E27C77F5D00AB231F /* SceneDelegate.swift */,
-				8D7C6D6027C77F5D00AB231F /* ViewController.swift */,
-				8D7C6D6227C77F5D00AB231F /* Main.storyboard */,
 				8D7C6D6527C77F5E00AB231F /* Assets.xcassets */,
 				8D7C6D6727C77F5E00AB231F /* LaunchScreen.storyboard */,
 				8D7C6D6A27C77F5E00AB231F /* Info.plist */,
@@ -80,7 +77,6 @@
 				78E79758D4CAD5FCBC52B272 /* Pods-WebsocketProject.debug.xcconfig */,
 				A9DCBC7E9AF41BB58098FE66 /* Pods-WebsocketProject.release.xcconfig */,
 			);
-			name = Pods;
 			path = Pods;
 			sourceTree = "<group>";
 		};
@@ -154,7 +150,6 @@
 			files = (
 				8D7C6D6927C77F5E00AB231F /* LaunchScreen.storyboard in Resources */,
 				8D7C6D6627C77F5E00AB231F /* Assets.xcassets in Resources */,
-				8D7C6D6427C77F5D00AB231F /* Main.storyboard in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -207,23 +202,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				8D7C6D6127C77F5D00AB231F /* ViewController.swift in Sources */,
 				8D7C6D5D27C77F5D00AB231F /* AppDelegate.swift in Sources */,
 				8D7C6D5F27C77F5D00AB231F /* SceneDelegate.swift in Sources */,
+				8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXVariantGroup section */
-		8D7C6D6227C77F5D00AB231F /* Main.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				8D7C6D6327C77F5D00AB231F /* Base */,
-			);
-			name = Main.storyboard;
-			sourceTree = "<group>";
-		};
 		8D7C6D6727C77F5E00AB231F /* LaunchScreen.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
@@ -364,7 +351,6 @@
 				INFOPLIST_FILE = WebsocketProject/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
@@ -393,7 +379,6 @@
 				INFOPLIST_FILE = WebsocketProject/Info.plist;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
-				INFOPLIST_KEY_UIMainStoryboardFile = Main;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				LD_RUNPATH_SEARCH_PATHS = (
