@@ -7,5 +7,8 @@ target 'WebsocketProject' do
 
   # Pods for WebsocketProject
 pod 'MaterialComponents/Cards+Theming'
+pod 'MaterialComponents/Buttons+Theming'
+pod 'MaterialComponents/Buttons'
 pod 'Alamofire', '~> 5.5'
+pod 'RealmSwift', '~>10'
 end

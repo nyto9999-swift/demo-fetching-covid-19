@@ -3,4 +3,69 @@
    uuid = "3E16FDD1-E7F8-482B-8A82-444BC51A1B29"
    type = "0"
    version = "2.0">
+   <Breakpoints>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            uuid = "D3459196-B06D-4914-91C9-A652677331B1"
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "WebsocketProject/ViewModel/CountryViewModel.swift"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "4"
+            endingLineNumber = "4"
+            landmarkName = "CountryViewModel"
+            landmarkType = "14">
+            <Locations>
+               <Location
+                  uuid = "D3459196-B06D-4914-91C9-A652677331B1 - 2f3f1afbaf5920fe"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WebsocketProject.CountryViewModel.__allocating_init() -&gt; WebsocketProject.CountryViewModel"
+                  moduleName = "WebsocketProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yuhsuan/Desktop/clone/WebsocketProject/WebsocketProject/ViewModel/CountryViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "12">
+               </Location>
+               <Location
+                  uuid = "D3459196-B06D-4914-91C9-A652677331B1 - 85314b3b23f58932"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WebsocketProject.CountryViewModel.init() -&gt; WebsocketProject.CountryViewModel"
+                  moduleName = "WebsocketProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yuhsuan/Desktop/clone/WebsocketProject/WebsocketProject/ViewModel/CountryViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "4"
+                  endingLineNumber = "4"
+                  offsetFromSymbolStart = "140">
+               </Location>
+               <Location
+                  uuid = "D3459196-B06D-4914-91C9-A652677331B1 - 40c1f5324ac40c27"
+                  shouldBeEnabled = "Yes"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "WebsocketProject.CountryViewModel.__deallocating_deinit"
+                  moduleName = "WebsocketProject"
+                  usesParentBreakpointCondition = "Yes"
+                  urlString = "file:///Users/yuhsuan/Desktop/clone/WebsocketProject/WebsocketProject/ViewModel/CountryViewModel.swift"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "0"
+                  endingLineNumber = "0"
+                  offsetFromSymbolStart = "16">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+   </Breakpoints>
 </Bucket>
