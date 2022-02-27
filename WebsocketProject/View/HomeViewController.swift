@@ -13,22 +13,18 @@ import RealmSwift
 
 class HomeViewController: UIViewController {
     
-//    enum ToggleMode: Int {
-//        case edit
-//        case reorder
-//    }
-//
-//    var toggle = ToggleMode.reorder
-//    var dataSource: [StatesViewModel] = []
-    
     let apicall = AlamofireManager()
-    var countries = [CountryViewModel]()
+    var countries = [Country]()
+    var isDescending = false
+    let realm = RealmManager.shared
     
+
     lazy var searchBar:UISearchBar = {
         let searchBar                      = UISearchBar()
         searchBar.searchBarStyle           = UISearchBar.Style.default
         searchBar.isUserInteractionEnabled = true
         searchBar.showsCancelButton        = false
+        
         return searchBar
     }()
     
@@ -54,24 +50,16 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        fetchCountries()
+        realmRender()
         setupView()
     }
     
-    func fetchCountries(){
-        
-        AlamofireManager.shared.CountryValues { [weak self] result in
-            guard let self = self else { return }
-
-            switch result {
-                case .success(let result):
-                    DispatchQueue.main.async {
-                        self.countries = result
-                        self.CardCollection.reloadData()
-                    }
-                case .failure(_):
-                    print("error")
-            }
+  
+    
+    func realmRender(){
+        DispatchQueue.main.async {
+            self.countries = self.realm.CountryValues()
+            self.CardCollection.reloadData()
         }
     }
     
@@ -85,19 +73,15 @@ class HomeViewController: UIViewController {
         CardCollection.pin(to: view)
         
         //nav bar
+        
         navigationItem.titleView           = searchBar
         navigationItem.rightBarButtonItems = [
-            UIBarButtonItem(
-                image: UIImage(systemName: "heart.fill"),
-                style: .plain,
-                target: self,
-                action: #selector(toggleModes)
-            ),
+    
             UIBarButtonItem(
                 image: UIImage(systemName: "arrow.up.arrow.down"),
                 style: .done,
                 target: self,
-                action: #selector(TappedSort)
+                action: #selector(tappedSort)
             ),
         ]
         
@@ -109,29 +93,14 @@ class HomeViewController: UIViewController {
         
     }
     
-    @objc func toggleModes(){
-//        switch toggle {
-//            case .edit:
-//                toggle = .reorder
-//            case .reorder:
-//                toggle = .edit
-//        }
-//        self.update()
-//        self.CardCollection.reloadData()
+    @objc func tappedSort(){
+        
+        countries = realm.sort(bool: isDescending)
+        CardCollection.reloadData()
+        isDescending.toggle()
+        print(isDescending)
+        
     }
-    @objc func TappedSort(){
-        print("sort")
-    }
-    
-//    func update() {
-//        switch toggle {
-//            case .edit:
-//                navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "circle")
-//            case .reorder:
-//                navigationItem.rightBarButtonItems?[0].image = UIImage(systemName: "heart.fill")
-//        }
-//    }
-//
     
     @objc func reorderCards(gesture: UILongPressGestureRecognizer) {
         
@@ -141,10 +110,13 @@ class HomeViewController: UIViewController {
                     let selectedIndexPath = CardCollection.indexPathForItem(
                         at: gesture.location(in: CardCollection))
                 else { break }
+                
                 CardCollection.beginInteractiveMovementForItem(at: selectedIndexPath)
             case .changed:
                 guard let gestureView = gesture.view else { break }
+
                 CardCollection.updateInteractiveMovementTargetPosition(gesture.location(in: gestureView))
+                print(gesture.location(in: gestureView))
             case .ended:
                 CardCollection.endInteractiveMovement()
             default:
@@ -161,56 +133,49 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-//        return stateVMs.count
+ 
         return countries.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionCell.identifier, for: indexPath) as! HomeCollectionCell
-//
-//        let stateVM = stateVMs[indexPath.item]
-//        cell.stateVM = stateVM
-//        if stateVM.selected {
-//            CardCollection.selectItem(at: indexPath, animated: true, scrollPosition: [])
-//            cell.isSelected = true
-//            cell.stateVM = stateVM
-//        }
         
-//        cell.isAccessibilityElement = true
-//        cell.accessibilityLabel = "102323"
+        
         cell.cardButton1.setTitle(countries[indexPath.item].name, for: .normal)
         return cell
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-//        guard toggle == .edit else { return }
-//        stateVMs[indexPath.item].selected.toggle()
+ 
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-//        guard toggle == .edit else { return }
-//        stateVMs[indexPath.item].selected = false
     }
     
-//    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
-////        return toggle == .reorder
-//    }
-    
     func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        let item = countries.remove(at: sourceIndexPath.row)
         
-//        let sourceItem = stateVMs[sourceIndexPath.item]
-//
-//        // reorder all cells in between source and destination, moving each by 1 position
-//        if sourceIndexPath.item < destinationIndexPath.item {
-//          for ind in sourceIndexPath.item..<destinationIndexPath.item {
-//            stateVMs[ind] = stateVMs[ind + 1]
-//          }
-//        } else {
-//          for ind in (destinationIndexPath.item + 1...sourceIndexPath.item).reversed() {
-//            stateVMs[ind] = stateVMs[ind - 1]
-//          }
-//        }
-//        stateVMs[destinationIndexPath.item] = sourceItem
+        
+        countries.insert(item, at: destinationIndexPath.row)
+        
+        realm.switchIndex(source: sourceIndexPath.row, destination: destinationIndexPath.row, descending: isDescending)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
+        true
+    }
+}
+
+extension HomeViewController: UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        let pan = scrollView.panGestureRecognizer
+        let velocity = pan.velocity(in: scrollView).y
+        if velocity < -1000 {
+            self.navigationController?.setNavigationBarHidden(true, animated: true)
+        } else if velocity > 1000 {
+            self.navigationController?.setNavigationBarHidden(false, animated: true)
+            
+        }
     }
 }
 

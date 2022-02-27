@@ -1,7 +1,25 @@
 PODS:
   - Alamofire (5.5.0)
   - MaterialComponents/AnimationTiming (124.2.0)
+  - MaterialComponents/AppBar (124.2.0):
+    - MaterialComponents/FlexibleHeader
+    - MaterialComponents/HeaderStackView
+    - MaterialComponents/NavigationBar
+    - MaterialComponents/private/Application
+    - MaterialComponents/private/Icons/ic_arrow_back
+    - MaterialComponents/private/UIMetrics
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
+  - "MaterialComponents/AppBar+Theming (124.2.0)":
+    - MaterialComponents/AppBar
+    - MaterialComponents/schemes/Container
   - MaterialComponents/Availability (124.2.0)
+  - MaterialComponents/ButtonBar (124.2.0):
+    - MaterialComponents/Buttons
+    - MaterialComponents/private/Application
+    - MDFInternationalization
   - MaterialComponents/Buttons (124.2.0):
     - MaterialComponents/Elevation
     - MaterialComponents/Ink
@@ -46,17 +64,44 @@ PODS:
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
+  - MaterialComponents/FlexibleHeader (124.2.0):
+    - MaterialComponents/Availability
+    - MaterialComponents/Elevation
+    - "MaterialComponents/FlexibleHeader+ShiftBehavior"
+    - "MaterialComponents/FlexibleHeader+ShiftBehaviorEnabledWithStatusBar"
+    - MaterialComponents/private/Application
+    - MaterialComponents/private/Math
+    - MaterialComponents/private/UIMetrics
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MDFTextAccessibility
+  - "MaterialComponents/FlexibleHeader+ShiftBehavior (124.2.0)"
+  - "MaterialComponents/FlexibleHeader+ShiftBehaviorEnabledWithStatusBar (124.2.0)":
+    - "MaterialComponents/FlexibleHeader+ShiftBehavior"
+  - MaterialComponents/HeaderStackView (124.2.0)
   - MaterialComponents/Ink (124.2.0):
     - MaterialComponents/Availability
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
+  - MaterialComponents/NavigationBar (124.2.0):
+    - MaterialComponents/ButtonBar
+    - MaterialComponents/Elevation
+    - MaterialComponents/private/Math
+    - MaterialComponents/Typography
+    - MDFInternationalization
+    - MDFTextAccessibility
+  - MaterialComponents/Palettes (124.2.0)
   - MaterialComponents/private/Application (124.2.0)
   - MaterialComponents/private/Color (124.2.0):
     - MaterialComponents/Availability
   - MaterialComponents/private/Icons/Base (124.2.0)
+  - MaterialComponents/private/Icons/ic_arrow_back (124.2.0):
+    - MaterialComponents/private/Icons/Base
   - MaterialComponents/private/Icons/ic_check_circle (124.2.0):
     - MaterialComponents/private/Icons/Base
   - MaterialComponents/private/Math (124.2.0)
+  - MaterialComponents/private/UIMetrics (124.2.0):
+    - MaterialComponents/private/Application
   - MaterialComponents/Ripple (124.2.0):
     - MaterialComponents/AnimationTiming
     - MaterialComponents/Availability
@@ -90,6 +135,17 @@ PODS:
     - MaterialComponents/private/Color
     - MaterialComponents/private/Math
     - MaterialComponents/ShadowLayer
+  - MaterialComponents/Tabs (124.2.0):
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/Elevation
+    - MaterialComponents/Ink
+    - MaterialComponents/Palettes
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MaterialComponents/ShadowElevations
+    - MaterialComponents/ShadowLayer
+    - MaterialComponents/Typography
+    - MDFInternationalization
   - MaterialComponents/Typography (124.2.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
@@ -104,9 +160,12 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 5.5)
+  - MaterialComponents/AppBar
+  - "MaterialComponents/AppBar+Theming"
   - MaterialComponents/Buttons
   - "MaterialComponents/Buttons+Theming"
   - "MaterialComponents/Cards+Theming"
+  - MaterialComponents/Tabs
   - RealmSwift (~> 10)
 
 SPEC REPOS:
@@ -126,6 +185,6 @@ SPEC CHECKSUMS:
   Realm: d9e4e5877095a6722145811f56fe89a531c9659d
   RealmSwift: e4191b4b957fcfcbed23751ec65eec98f8173ab5
 
-PODFILE CHECKSUM: 86783a9cd2c66e42cb0ce541f5e7d40854dc374c
+PODFILE CHECKSUM: 5f90729aefb2c0c346b21b2167041537fefcb6e4
 
 COCOAPODS: 1.11.2
