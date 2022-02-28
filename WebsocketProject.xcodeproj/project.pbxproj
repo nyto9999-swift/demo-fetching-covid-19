@@ -18,6 +18,7 @@
 		8DC3B42327C90D4C00523695 /* AlamofireManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42227C90D4C00523695 /* AlamofireManager.swift */; };
 		8DC3B42627CA25A500523695 /* CountryViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42527CA25A500523695 /* CountryViewModel.swift */; };
 		8DC3B42827CA31F200523695 /* RealmManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42727CA31F200523695 /* RealmManager.swift */; };
+		8DC3B42A27CBCFB800523695 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42927CBCFB800523695 /* SettingViewController.swift */; };
 		E8F233D68F39488FC33DA00A /* Pods_WebsocketProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */; };
 /* End PBXBuildFile section */
 
@@ -36,6 +37,7 @@
 		8DC3B42227C90D4C00523695 /* AlamofireManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlamofireManager.swift; sourceTree = "<group>"; };
 		8DC3B42527CA25A500523695 /* CountryViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryViewModel.swift; sourceTree = "<group>"; };
 		8DC3B42727CA31F200523695 /* RealmManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RealmManager.swift; sourceTree = "<group>"; };
+		8DC3B42927CBCFB800523695 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
 		967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebsocketProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9DCBC7E9AF41BB58098FE66 /* Pods-WebsocketProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebsocketProject.release.xcconfig"; path = "Target Support Files/Pods-WebsocketProject/Pods-WebsocketProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -125,6 +127,7 @@
 			children = (
 				8D7C6D7027C7A07C00AB231F /* HomeViewController.swift */,
 				8DC3B41127C88CB900523695 /* HomeCollectionCell.swift */,
+				8DC3B42927CBCFB800523695 /* SettingViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -265,6 +268,7 @@
 				8DC3B42327C90D4C00523695 /* AlamofireManager.swift in Sources */,
 				8D7C6D5D27C77F5D00AB231F /* AppDelegate.swift in Sources */,
 				8D7C6D5F27C77F5D00AB231F /* SceneDelegate.swift in Sources */,
+				8DC3B42A27CBCFB800523695 /* SettingViewController.swift in Sources */,
 				8DC3B42827CA31F200523695 /* RealmManager.swift in Sources */,
 				8DC3B41027C7E9CA00523695 /* UIView+Extensions.swift in Sources */,
 				8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */,

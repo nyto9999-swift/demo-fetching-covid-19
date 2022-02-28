@@ -50,35 +50,32 @@ final class RealmManager {
     func render() -> [Country] {
     
         let countryObjects = realm.objects(Country.self)
-        let sortedCountryObjects: Results<Country>
-        
-        // first time run the app
-        if countryObjects.isEmpty || countryObjects.count == 0 {
-            sortedCountryObjects = countryObjects.sorted(byKeyPath: "name", ascending: true)
-            print("first time.. sort by name")
-        }
-        
-        else{
-            sortedCountryObjects = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: true)
-            print("not first time... sort by id")
-        }
-        
-        
-        var countries = [Country]()
-        
-        for object in sortedCountryObjects {
-            countries.append(object)
-        }
-        
-        return countries
-    }
-    
-
-    func sort(bool: Bool) -> [Country] {
         
         var sortedCountries = [Country]()
         
-        let countries = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: bool)
+        
+        // first time run the app
+        if countryObjects.isEmpty || countryObjects.count == 0 {
+            sortedCountries = sortById()
+            print("first time.. sort by name")
+        }
+        
+        // not first time to run the app
+        else{
+            
+            print("not first time... sort by id")
+            sortedCountries = sortByFavorite(bool: true)
+        }
+        
+        return sortedCountries
+    }
+    
+
+    func sortById() -> [Country] {
+        
+        var sortedCountries = [Country]()
+        
+        let countries = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: true)
         
         for country in countries {
             sortedCountries.append(country)
@@ -87,37 +84,51 @@ final class RealmManager {
         return sortedCountries
     }
     
-    func switchIndex(source: Int, destination: Int, descending: Bool){
+    func sortByFavorite(bool: Bool) -> [Country] {
+        let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: bool), SortDescriptor(keyPath: "id", ascending: bool)]
         
-        
-        var start = source
-        var end = destination
-        
-        if descending {
-            
-            let total = realm.objects(Country.self).count - 1
-            print("total\(total)")
-            
-            start = total - start
-            end = total - end
-            
-            
-            print(start)
-            print(end)
-        }
-        
-        realm.beginWrite()
-        
-        let startItem = realm.objects(Country.self).filter("id = %@", start)
-        let endItem = realm.objects(Country.self).filter("id = %@", end)
 
-        if let startItem = startItem.first, let endItem = endItem.first {
-            startItem.id = end
-            endItem.id = start
+        var sortedCountries = [Country]()
+        
+        let countries = realm.objects(Country.self).sorted(by: sortProperties)
+        
+        for country in countries {
+            sortedCountries.append(country)
         }
-        try! realm.commitWrite()
+        
+        return sortedCountries
     }
     
+    func storeSetting(iPath: [IndexPath], completion: @escaping (Result<String, Error>) -> Void) {
+        
+        do {
+            try realm.write({
+                
+                for i in iPath {
+                    print(i)
+                    let result = realm.objects(Country.self).filter("id = %@", i.row)
+
+                    guard let result = result.first else { return }
+                    
+                    if result.favorite == 0 {
+                        result.favorite = 1
+                    }
+                    else {
+                        result.favorite = 0
+                    }
+                    print(result.favorite)
+                }
+            })
+            completion(.success("成功"))
+        }
+        catch {
+            
+            completion(.failure(error))
+            print("setting error")
+        }
+    }
+    
+
     func delete(objectType: Object.Type) {
         try! realm.write {
                 let objects = realm.objects(objectType)
@@ -156,11 +167,6 @@ final class RealmManager {
             }
         }
     }
-    
-    
-     
-    
-    
 }
 
 

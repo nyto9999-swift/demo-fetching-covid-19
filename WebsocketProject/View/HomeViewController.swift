@@ -14,17 +14,15 @@ import RealmSwift
 class HomeViewController: UIViewController {
     
     let apicall = AlamofireManager()
+    let realm = RealmManager.shared
     var countries = [Country]()
     var isDescending = false
-    let realm = RealmManager.shared
     
-
     lazy var searchBar:UISearchBar = {
         let searchBar                      = UISearchBar()
         searchBar.searchBarStyle           = UISearchBar.Style.default
         searchBar.isUserInteractionEnabled = true
         searchBar.showsCancelButton        = false
-        
         return searchBar
     }()
     
@@ -44,7 +42,6 @@ class HomeViewController: UIViewController {
         collection.setCollectionViewLayout(layout, animated: true)
         collection.allowsMultipleSelection = true
         collection.translatesAutoresizingMaskIntoConstraints = false
-        
         return collection
     }()
     
@@ -54,7 +51,11 @@ class HomeViewController: UIViewController {
         setupView()
     }
     
-  
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        self.countries = RealmManager.shared.render()
+        self.CardCollection.reloadData()
+    }
     
     func realmRender(){
         DispatchQueue.main.async {
@@ -76,54 +77,35 @@ class HomeViewController: UIViewController {
         
         navigationItem.titleView           = searchBar
         navigationItem.rightBarButtonItems = [
-    
+            
+            UIBarButtonItem(
+                image: UIImage(systemName: "gearshape.fill"),
+                style: .done,
+                target: self,
+                action: #selector(tappedGear)
+            ),
             UIBarButtonItem(
                 image: UIImage(systemName: "arrow.up.arrow.down"),
                 style: .done,
                 target: self,
                 action: #selector(tappedSort)
             ),
+            
         ]
-        
-        let longPressGesture = UILongPressGestureRecognizer(
-            target: self,
-            action: #selector(reorderCards(gesture:)))
-        longPressGesture.cancelsTouchesInView = false
-        CardCollection.addGestureRecognizer(longPressGesture)
-        
     }
     
     @objc func tappedSort(){
-        
-        countries = realm.sort(bool: isDescending)
+        countries = realm.sortByFavorite(bool: isDescending)
         CardCollection.reloadData()
         isDescending.toggle()
         print(isDescending)
-        
     }
-    
-    @objc func reorderCards(gesture: UILongPressGestureRecognizer) {
+    @objc func tappedGear(){
+        let destinationVC = SettingViewController()
         
-        switch gesture.state {
-            case .began:
-                guard
-                    let selectedIndexPath = CardCollection.indexPathForItem(
-                        at: gesture.location(in: CardCollection))
-                else { break }
-                
-                CardCollection.beginInteractiveMovementForItem(at: selectedIndexPath)
-            case .changed:
-                guard let gestureView = gesture.view else { break }
-
-                CardCollection.updateInteractiveMovementTargetPosition(gesture.location(in: gestureView))
-                print(gesture.location(in: gestureView))
-            case .ended:
-                CardCollection.endInteractiveMovement()
-            default:
-                CardCollection.cancelInteractiveMovement()
-        }
+        destinationVC.countries = RealmManager.shared.sortById()
+        self.navigationController?.pushViewController(destinationVC, animated: true)
     }
-    
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
@@ -142,6 +124,13 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
         
         
         cell.cardButton1.setTitle(countries[indexPath.item].name, for: .normal)
+        if countries[indexPath.row].favorite == 0 {
+            cell.backgroundColor = .systemGray3
+        }
+        else {
+            cell.backgroundColor = .systemTeal
+        }
+        
         return cell
     }
     
@@ -150,15 +139,6 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
     
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, moveItemAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        let item = countries.remove(at: sourceIndexPath.row)
-        
-        
-        countries.insert(item, at: destinationIndexPath.row)
-        
-        realm.switchIndex(source: sourceIndexPath.row, destination: destinationIndexPath.row, descending: isDescending)
     }
     
     func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {

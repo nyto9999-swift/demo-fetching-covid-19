@@ -4,7 +4,8 @@ import RealmSwift
 
 class Country: Object, Codable {
     
-    @objc dynamic var id: Int = 0
+    @objc dynamic var id: Int = 999
+    @objc dynamic var favorite: Int = 1
     @objc dynamic var name: String = ""
     @objc dynamic var slug: String = ""
     
