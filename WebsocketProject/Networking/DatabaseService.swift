@@ -1,22 +1,23 @@
 import UIKit
 import RealmSwift
 
-final class RealmManager {
+final class DatabaseService {
 
-    static let shared = RealmManager()
+    static let shared = DatabaseService()
     let realm = try! Realm()
+    var vms = [CountryViewModel]()
     
-    
-    public func CountryValues() -> [Country] {
+    public func fetchCovid19Data() -> [CountryViewModel] {
         
         if isFirstTime() {
             print("api call....")
             
-            AlamofireManager.shared.fetchData(url: "https://api.covid19api.com/countries", completion: { result in
+            NetworkingService.shared.fetchCovid19Json(url: "https://api.covid19api.com/countries", completion: { [weak self] result in
+
                 switch result {
                         
-                    case .success(_):
-                        print("alamofire fetched data")
+                    case .success(let countries):
+                        self?.save(countries: countries)
                     case .failure(_):
                         print("alamofire fail")
                 }
@@ -38,6 +39,7 @@ final class RealmManager {
         realm.beginWrite()
         
         for country in countries {
+            
             realm.add(country)
         }
         
@@ -47,56 +49,54 @@ final class RealmManager {
     }
 
     
-    func render() -> [Country] {
-    
-        let countryObjects = realm.objects(Country.self)
+    func render() -> [CountryViewModel] {
         
-        var sortedCountries = [Country]()
+        let countryObjects = realm.objects(Country.self)
         
         
         // first time run the app
         if countryObjects.isEmpty || countryObjects.count == 0 {
-            sortedCountries = sortById()
+            vms = sortById()
             print("first time.. sort by name")
         }
         
         // not first time to run the app
         else{
-            
+            vms = sortByFavorite(bool: true)
             print("not first time... sort by id")
-            sortedCountries = sortByFavorite(bool: true)
         }
         
-        return sortedCountries
+        return vms
     }
     
 
-    func sortById() -> [Country] {
-        
-        var sortedCountries = [Country]()
+    func sortById() -> [CountryViewModel] {
+        vms = []
         
         let countries = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: true)
         
+        
         for country in countries {
-            sortedCountries.append(country)
+            vms.append(CountryViewModel(name: country.name, favorite: country.favorite))
         }
         
-        return sortedCountries
+        return vms
     }
     
-    func sortByFavorite(bool: Bool) -> [Country] {
+    func sortByFavorite(bool: Bool) -> [CountryViewModel] {
+        vms = []
+        
         let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: bool), SortDescriptor(keyPath: "id", ascending: bool)]
         
-
-        var sortedCountries = [Country]()
         
         let countries = realm.objects(Country.self).sorted(by: sortProperties)
         
+
         for country in countries {
-            sortedCountries.append(country)
+            vms.append(CountryViewModel(name: country.name, favorite: country.favorite))
         }
         
-        return sortedCountries
+        return vms
     }
     
     func storeSetting(iPath: [IndexPath], completion: @escaping (Result<String, Error>) -> Void) {
@@ -170,7 +170,7 @@ final class RealmManager {
 }
 
 
-extension RealmManager {
+extension DatabaseService {
     func latest() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"

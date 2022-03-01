@@ -13,10 +13,11 @@ import RealmSwift
 
 class HomeViewController: UIViewController {
     
-    let apicall = AlamofireManager()
-    let realm = RealmManager.shared
-    var countries = [Country]()
-    var isDescending = false
+    let realm = DatabaseService.shared
+    var viewModels = [CountryViewModel]() 
+    var filterViewModels = [CountryViewModel]()
+    var isSearch: Bool = false
+    var isAscending = false
     
     lazy var searchBar:UISearchBar = {
         let searchBar                      = UISearchBar()
@@ -26,7 +27,7 @@ class HomeViewController: UIViewController {
         return searchBar
     }()
     
-    lazy var CardCollection: UICollectionView = {
+    lazy var CollectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
         layout.scrollDirection          = .vertical
@@ -47,35 +48,37 @@ class HomeViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        realmRender()
+        self.hideKeyboardWhenTappedAround()
+        fetchCovidData()
         setupView()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.countries = RealmManager.shared.render()
-        self.CardCollection.reloadData()
+        self.viewModels = realm.render()
+        self.CollectionView.reloadData()
     }
     
-    func realmRender(){
+    func fetchCovidData(){
         DispatchQueue.main.async {
-            self.countries = self.realm.CountryValues()
-            self.CardCollection.reloadData()
+            self.viewModels = self.realm.fetchCovid19Data()
+            self.CollectionView.reloadData()
         }
     }
     
     func setupView(){
-        view.addSubview(CardCollection)
+        view.addSubview(CollectionView)
         
         //collection
-        CardCollection.delegate            = self
-        CardCollection.dataSource          = self
-        CardCollection.register(HomeCollectionCell.self, forCellWithReuseIdentifier: HomeCollectionCell.identifier)
-        CardCollection.pin(to: view)
+        CollectionView.delegate            = self
+        CollectionView.dataSource          = self
+        CollectionView.register(HomeCollectionCell.self, forCellWithReuseIdentifier: HomeCollectionCell.identifier)
+        CollectionView.pin(to: view)
         
         //nav bar
         
         navigationItem.titleView           = searchBar
+        searchBar.delegate                 = self
         navigationItem.rightBarButtonItems = [
             
             UIBarButtonItem(
@@ -90,59 +93,38 @@ class HomeViewController: UIViewController {
                 target: self,
                 action: #selector(tappedSort)
             ),
-            
         ]
     }
     
+    //nav button function
     @objc func tappedSort(){
-        countries = realm.sortByFavorite(bool: isDescending)
-        CardCollection.reloadData()
-        isDescending.toggle()
-        print(isDescending)
+        print("tap")
+        self.viewModels = realm.sortByFavorite(bool: isAscending)
+        self.CollectionView.reloadData()
+        self.isAscending.toggle()
     }
+    
     @objc func tappedGear(){
         let destinationVC = SettingViewController()
-        
-        destinationVC.countries = RealmManager.shared.sortById()
         self.navigationController?.pushViewController(destinationVC, animated: true)
     }
+    
 }
 
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return 1
-    }
-    
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
- 
-        return countries.count
+        return isSearch ? filterViewModels.count : viewModels.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionCell.identifier, for: indexPath) as! HomeCollectionCell
         
+        let country = isSearch ? filterViewModels[indexPath.item] : viewModels[indexPath.item]
         
-        cell.cardButton1.setTitle(countries[indexPath.item].name, for: .normal)
-        if countries[indexPath.row].favorite == 0 {
-            cell.backgroundColor = .systemGray3
-        }
-        else {
-            cell.backgroundColor = .systemTeal
-        }
+        cell.country = country
         
         return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
- 
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, canMoveItemAt indexPath: IndexPath) -> Bool {
-        true
     }
 }
 
@@ -154,8 +136,41 @@ extension HomeViewController: UIScrollViewDelegate {
             self.navigationController?.setNavigationBarHidden(true, animated: true)
         } else if velocity > 1000 {
             self.navigationController?.setNavigationBarHidden(false, animated: true)
-            
         }
     }
 }
 
+extension HomeViewController: UISearchBarDelegate {
+    func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
+        
+        if searchBar.text == "" || searchBar.text == nil {
+            isSearch = false
+            self.CollectionView.reloadData()
+        }
+    }
+    
+    func searchBarSearchButtonClicked(_ searchBar: UISearchBar) {
+        guard let text = searchBar.text else { return }
+        
+        searchBar.resignFirstResponder()
+
+        filterViewModels = viewModels.filter({
+            $0.name.contains(text)
+        })
+
+        isSearch = true
+        self.CollectionView.reloadData()
+    }
+}
+
+extension UIViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
+}

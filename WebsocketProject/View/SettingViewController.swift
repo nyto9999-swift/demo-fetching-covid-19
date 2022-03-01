@@ -9,15 +9,16 @@ import UIKit
 import MaterialComponents.MaterialSnackbar
 
 class SettingViewController: UIViewController {
- 
-    var countries = [Country]() //passed data
+    
+    var countryVMs = [CountryViewModel]()
+    let db = DatabaseService.shared
+    
     let tableView = UITableView()
     let snackMessage = MDCSnackbarMessage()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        print(countries.count)
+        countryVMs = db.sortById()
         setup()
     }
     
@@ -47,40 +48,42 @@ class SettingViewController: UIViewController {
     @objc func save() {
         if let selectedRows = tableView.indexPathsForSelectedRows {
         
-            RealmManager.shared.storeSetting(iPath: selectedRows, completion: { [weak self] result in
-                guard let self = self else { return }
-
+            db.storeSetting(iPath: selectedRows, completion: { [weak self] result in
+            
                 switch result {
                     case .success(_):
-                        self.snackMessage.text = "更新成功"
+                        self?.snackMessage.text = "更新成功"
                     case .failure(_):
-                        self.snackMessage.text = "更新失敗"
+                        self?.snackMessage.text = "更新失敗"
                 }
             })
         }
         
-        tableView.reloadData()
-        MDCSnackbarManager.default.show(snackMessage)
+        DispatchQueue.main.async {
+            self.countryVMs = self.db.sortById()
+            self.tableView.reloadData()
+            MDCSnackbarManager.default.show(self.snackMessage)
+        }
     }
 }
 
 extension SettingViewController: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        self.countries.count
+        self.countryVMs.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
         
-        if (countries[indexPath.row].favorite == 0) {
+        if (countryVMs[indexPath.row].favorite == 0) {
             cell.accessoryType = .checkmark
         }
         else {
             cell.accessoryType = .none
         }
         
-        cell.textLabel?.text = countries[indexPath.row].name
+        cell.textLabel?.text = countryVMs[indexPath.row].name
         cell.selectionStyle = .none
         
         return cell

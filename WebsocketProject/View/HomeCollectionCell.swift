@@ -11,15 +11,12 @@ import MaterialComponents.MaterialContainerScheme
 
 class HomeCollectionCell: MDCCardCollectionCell {
     
-//    var stateVM: StatesViewModel! {
-//        didSet {
-//            imageView.image = stateVM.image
-//            cardButton1.setTitle(stateVM.subTitle, for: .normal)
-//            cardButton2.setTitle(stateVM.subTitle, for: .normal)
-//        }
-//    }
-    
-    static let cardWidth: CGFloat = 300
+    var country: CountryViewModel! {
+        didSet {
+            cardButton1.setTitle(country.name, for: .normal)
+            contentView.superview?.backgroundColor = country.color
+        }
+    }
 
     let cardButton1: MDCButton    = MDCButton()
     let cardButton2: MDCButton    = MDCButton()

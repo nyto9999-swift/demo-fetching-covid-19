@@ -1,24 +1,20 @@
 import UIKit
 import Alamofire
 
-final class AlamofireManager {
+final class NetworkingService {
     
-    static let shared = AlamofireManager()
+    static let shared = NetworkingService()
     var countries = [Country]()
     
-    
-    
-    func fetchData(url: String, completion: @escaping (Result<String, Error>) -> Void) {
+    func fetchCovid19Json(url: String, completion: @escaping (Result<[Country], Error>) -> Void) {
         AF.request("https://api.covid19api.com/countries")
             .validate()
             .responseDecodable(of: [Country].self) { (response) in
                 
                 switch response.result {
                     case .success(let countries):
-                            
-                        RealmManager.shared.save(countries: countries)
-                        
-                        completion(.success("stored in realm successfully"))
+                        completion(.success(countries))
+        
                     case .failure(let error):
                         completion(.failure(error))
                 }
