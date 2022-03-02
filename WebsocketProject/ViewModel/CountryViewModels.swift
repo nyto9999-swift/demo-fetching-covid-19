@@ -5,6 +5,7 @@ struct CountryViewModel {
     var name: String
     var favorite: Int = 1
     var color: UIColor = .systemTeal
+
     
     init(name: String, favorite: Int){
         var name = name
@@ -17,7 +18,7 @@ struct CountryViewModel {
         
         if favorite == 0 {
             self.favorite = 0
-            self.color = .systemGray3
+            self.color = .systemGray5
         }
         
         self.name = name

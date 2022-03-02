@@ -19,7 +19,6 @@ class HomeCollectionCell: MDCCardCollectionCell {
     }
 
     let cardButton1: MDCButton    = MDCButton()
-    let cardButton2: MDCButton    = MDCButton()
     let containerScheme           = MDCContainerScheme()
     
     override init(frame: CGRect) {
@@ -32,8 +31,11 @@ class HomeCollectionCell: MDCCardCollectionCell {
     }
     
     func setUpCard() {
-        cardButton1.applyTextTheme(withScheme: containerScheme)
-        cardButton2.applyTextTheme(withScheme: containerScheme)
+        
+        
+        cardButton1.applyOutlinedTheme(withScheme: containerScheme)
+        cardButton1.setTitleColor(.systemIndigo, for: UIControl.State.normal)
+        cardButton1.titleLabel?.font = containerScheme.typographyScheme.body2
         cardButton1.contentHorizontalAlignment = .left
         cardButton1.titleLabel?.numberOfLines = 0
         cardButton1.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
@@ -51,19 +53,14 @@ class HomeCollectionCell: MDCCardCollectionCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         if cardButton1.superview == nil { addSubview(cardButton1) }
-        if cardButton2.superview == nil { addSubview(cardButton2) }
+        
         cardButton1.sizeToFit()
-        cardButton2.sizeToFit()
+        
         cardButton1.frame = CGRect(
-            x: 3,
-            y: 3,
-            width: frame.width,
-            height: cardButton1.frame.height)
-        cardButton2.frame = CGRect(
-            x: 8,
-            y: cardButton1.frame.maxY + 8,
-            width: cardButton2.frame.width,
-            height: cardButton2.frame.height)
+            x: 6,
+            y: 6,
+            width: frame.width-12,
+            height: 48)
     }
     
     static let identifier = "collectionItem"

@@ -62,7 +62,7 @@ final class DatabaseService {
         
         // not first time to run the app
         else{
-            vms = sortByFavorite(bool: true)
+            vms = sortByAscDesc(bool: true)
             print("not first time... sort by id")
         }
         
@@ -83,7 +83,7 @@ final class DatabaseService {
         return vms
     }
     
-    func sortByFavorite(bool: Bool) -> [CountryViewModel] {
+    func sortByAscDesc(bool: Bool) -> [CountryViewModel] {
         vms = []
         
         let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: bool), SortDescriptor(keyPath: "id", ascending: bool)]
@@ -99,36 +99,45 @@ final class DatabaseService {
         return vms
     }
     
-    func storeSetting(iPath: [IndexPath], completion: @escaping (Result<String, Error>) -> Void) {
+    func filterFavorite() -> [CountryViewModel] {
+        vms = []
+        let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: true), SortDescriptor(keyPath: "id", ascending: true)]
         
-        do {
-            try realm.write({
-                
-                for i in iPath {
-                    print(i)
-                    let result = realm.objects(Country.self).filter("id = %@", i.row)
+        
+        let countries = realm.objects(Country.self).sorted(by: sortProperties).filter("favorite = 0")
+        
 
-                    guard let result = result.first else { return }
-                    
-                    if result.favorite == 0 {
-                        result.favorite = 1
-                    }
-                    else {
-                        result.favorite = 0
-                    }
-                    print(result.favorite)
-                }
-            })
-            completion(.success("成功"))
+        for country in countries {
+            vms.append(CountryViewModel(name: country.name, favorite: country.favorite))
         }
-        catch {
-            
-            completion(.failure(error))
-            print("setting error")
-        }
+        
+        return vms
     }
     
+    
+    
+    func storeSetting(iPath: [IndexPath]) throws {
+        try! realm.write({
+            
+            for i in iPath {
+                print(i)
+                let result = realm.objects(Country.self).filter("id = %@", i.row)
 
+                guard let result = result.first else {
+                    throw RealmError.write
+                }
+                
+                if result.favorite == 0 {
+                    result.favorite = 1
+                }
+                else {
+                    result.favorite = 0
+                }
+            }
+        })
+            
+    }
+    
     func delete(objectType: Object.Type) {
         try! realm.write {
                 let objects = realm.objects(objectType)

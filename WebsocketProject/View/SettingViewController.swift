@@ -47,22 +47,24 @@ class SettingViewController: UIViewController {
     
     @objc func save() {
         if let selectedRows = tableView.indexPathsForSelectedRows {
-        
-            db.storeSetting(iPath: selectedRows, completion: { [weak self] result in
             
-                switch result {
-                    case .success(_):
-                        self?.snackMessage.text = "更新成功"
-                    case .failure(_):
-                        self?.snackMessage.text = "更新失敗"
-                }
-            })
-        }
-        
-        DispatchQueue.main.async {
-            self.countryVMs = self.db.sortById()
-            self.tableView.reloadData()
-            MDCSnackbarManager.default.show(self.snackMessage)
+            do {
+                try db.storeSetting(iPath: selectedRows)
+                self.snackMessage.text = "更新成功"
+                self.countryVMs = self.db.sortById()
+                self.tableView.reloadData()
+            
+            }
+            catch RealmError.write {
+                self.snackMessage.text = "更新失敗"
+            }
+            catch {
+                print("我是誰")
+            }
+
+            DispatchQueue.main.async {
+                MDCSnackbarManager.default.show(self.snackMessage)
+            }
         }
     }
 }

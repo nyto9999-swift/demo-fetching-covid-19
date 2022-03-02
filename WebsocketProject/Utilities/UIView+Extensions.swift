@@ -18,3 +18,7 @@ public extension UIView {
         bottomAnchor.constraint(equalTo: superView.bottomAnchor, constant: -20.0).isActive = true
     }
 }
+
+enum RealmError: Error {
+  case write
+}

@@ -109,6 +109,11 @@ PODS:
     - MaterialComponents/ShadowElevations
     - MaterialComponents/ShadowLayer
     - MaterialComponents/Typography
+  - "MaterialComponents/Tabs+TabBarView (124.2.0)":
+    - MaterialComponents/AnimationTiming
+    - MaterialComponents/private/Math
+    - MaterialComponents/Ripple
+    - MDFInternationalization
   - MaterialComponents/Typography (124.2.0):
     - MaterialComponents/private/Application
     - MaterialComponents/private/Math
@@ -127,6 +132,7 @@ DEPENDENCIES:
   - "MaterialComponents/Buttons+Theming"
   - "MaterialComponents/Cards+Theming"
   - MaterialComponents/Snackbar
+  - "MaterialComponents/Tabs+TabBarView"
   - RealmSwift (~> 10)
 
 SPEC REPOS:
@@ -146,6 +152,6 @@ SPEC CHECKSUMS:
   Realm: d9e4e5877095a6722145811f56fe89a531c9659d
   RealmSwift: e4191b4b957fcfcbed23751ec65eec98f8173ab5
 
-PODFILE CHECKSUM: 788807d328e318d5852a1863fd7c50369775c448
+PODFILE CHECKSUM: b45e87d0334bf20b2bb571332cf8a2d84ac4c867
 
 COCOAPODS: 1.11.2
