@@ -1,5 +1,6 @@
 PODS:
   - Alamofire (5.5.0)
+  - MarqueeLabel (4.3.0)
   - MaterialComponents/AnimationTiming (124.2.0)
   - MaterialComponents/Availability (124.2.0)
   - MaterialComponents/Buttons (124.2.0):
@@ -128,6 +129,7 @@ PODS:
 
 DEPENDENCIES:
   - Alamofire (~> 5.5)
+  - MarqueeLabel
   - MaterialComponents/Buttons
   - "MaterialComponents/Buttons+Theming"
   - "MaterialComponents/Cards+Theming"
@@ -138,6 +140,7 @@ DEPENDENCIES:
 SPEC REPOS:
   trunk:
     - Alamofire
+    - MarqueeLabel
     - MaterialComponents
     - MDFInternationalization
     - MDFTextAccessibility
@@ -146,12 +149,13 @@ SPEC REPOS:
 
 SPEC CHECKSUMS:
   Alamofire: 1c4fb5369c3fe93d2857c780d8bbe09f06f97e7c
+  MarqueeLabel: 02f5ac8fd6877c94564556cb93fa86c70c08baeb
   MaterialComponents: 1a9b2d9d45b1601ae544de85089adc4c464306d4
   MDFInternationalization: d697c55307816222a55685c4ccb1044ffb030c12
   MDFTextAccessibility: f4bb4cc2194286651b59a215fdeaa0e05dc90ba5
   Realm: d9e4e5877095a6722145811f56fe89a531c9659d
   RealmSwift: e4191b4b957fcfcbed23751ec65eec98f8173ab5
 
-PODFILE CHECKSUM: b45e87d0334bf20b2bb571332cf8a2d84ac4c867
+PODFILE CHECKSUM: 7730a23429100aff23d9dd4970a015b167250cec
 
 COCOAPODS: 1.11.2

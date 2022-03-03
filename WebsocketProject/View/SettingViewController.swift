@@ -10,7 +10,7 @@ import MaterialComponents.MaterialSnackbar
 
 class SettingViewController: UIViewController {
     
-    var countryVMs = [CountryViewModel]()
+    var countryVMs = [CollectionItemViewModel]()
     let db = DatabaseService.shared
     
     let tableView = UITableView()

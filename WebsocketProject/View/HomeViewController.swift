@@ -1,40 +1,35 @@
-//
-//  HomeViewController.swift
-//  WebsocketProject
-//
-//  Created by 宇宣 Chen on 2022/2/24.
-//
-
 import UIKit
 import MaterialComponents.MaterialCards
 import MaterialComponents.MaterialCards_Theming
 import MaterialComponents.MaterialContainerScheme
 import MaterialComponents.MaterialTabs_TabBarView
 import RealmSwift
+import MarqueeLabel
 
 
 class HomeViewController: UIViewController {
     
-    let realm = DatabaseService.shared
-    var viewModels = [CountryViewModel]() 
-    var filterViewModels = [CountryViewModel]()
-    var isSearch: Bool = false
-    var isAscending = false
+    let realm             = DatabaseService.shared
+    var collectionItemsVM = [CollectionItemViewModel]()
+    var filterViewModels  = [CollectionItemViewModel]()
+    var marqueeVM         = MarqueeViewModel()
+    var isSearch: Bool    = false
+    var isAscending       = false
     
     lazy var scrollView: UIScrollView = {
         let view = UIScrollView()
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.backgroundColor = .systemGray6
+        view.backgroundColor                           = .systemGray6
         return view
     }()
     
     lazy var scrollViewContainer: UIStackView = {
-        let view = UIStackView()
-        view.axis = .vertical
-        view.spacing = 5
+        let view                                       = UIStackView()
+        view.axis                                      = .vertical
+        view.spacing                                   = 5
         view.translatesAutoresizingMaskIntoConstraints = false
-        view.isLayoutMarginsRelativeArrangement = true
-        view.backgroundColor = .systemGray6
+        view.isLayoutMarginsRelativeArrangement        = true
+        view.backgroundColor                           = .systemGray6
         return view
     }()
     
@@ -43,24 +38,22 @@ class HomeViewController: UIViewController {
         searchBar.searchBarStyle           = UISearchBar.Style.default
         searchBar.isUserInteractionEnabled = true
         searchBar.showsCancelButton        = false
-        searchBar.backgroundColor = .systemGray6
+        searchBar.backgroundColor          = .systemGray6
         return searchBar
     }()
     
     lazy var tabBar: MDCTabBarView = {
-       let tabBar = MDCTabBarView()
-       tabBar.items = self.tabBarItems
-       tabBar.tabBarDelegate = self
+       let tabBar                                       = MDCTabBarView()
+       tabBar.items                                     = self.tabBarItems
+       tabBar.tabBarDelegate                            = self
        tabBar.translatesAutoresizingMaskIntoConstraints = false
-       tabBar.barTintColor = .systemGray6
-       tabBar.selectionIndicatorStrokeColor = .systemIndigo
-       tabBar.setTitleColor(.systemIndigo, for: UIControl.State.normal)
-       tabBar.rippleColor = .systemGray4
-        
+       tabBar.barTintColor                              = .systemGray6
+       tabBar.selectionIndicatorStrokeColor             = .systemIndigo
+       tabBar.rippleColor                               = .systemGray4
+       tabBar.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
+    
        return tabBar
      }()
-    
-    
     
     lazy var tabBarItems: [UITabBarItem] = {
       let itemTitles = ["All", "Favorite", "Setting"]
@@ -71,61 +64,51 @@ class HomeViewController: UIViewController {
         }
     }()
     
-
+    lazy var worldTotalMarqueeLabel: MarqueeLabel! = {
+        let title             = MarqueeLabel(frame: accessibilityFrame, duration: 8.0, fadeLength: 10.0)
+        title.type            = .continuous
+        title.speed           = .duration(50.0)
+        title.animationCurve  = .linear
+        title.fadeLength      = 10.0
+        title.leadingBuffer   = 50.0
+        title.trailingBuffer  = 5.0
+        title.backgroundColor = .systemGray6
+        title.tintColor       = .systemGray
+        return title
+    }()
     
     lazy var collectionView: UICollectionView = {
         
         let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection          = .vertical
-        layout.minimumLineSpacing       = 8
-        layout.minimumInteritemSpacing  = 8
-        let cardSize                    = (view.bounds.size.width / 2) - 12;
-        layout.itemSize                 = CGSize(width: cardSize, height: cardSize)
+        layout.scrollDirection                               = .vertical
+        layout.minimumLineSpacing                            = 8
+        layout.minimumInteritemSpacing                       = 8
+        let cardSize                                         = (view.bounds.size.width / 2) - 12;
+        layout.itemSize                                      = CGSize(width: cardSize, height: cardSize)
         
-        let collection                  = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.isScrollEnabled      = true
-        collection.alwaysBounceVertical = true
-        collection.contentInset         = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
-        collection.setCollectionViewLayout(layout, animated: true)
-        collection.allowsMultipleSelection = true
+        let collection                                       = UICollectionView(frame: .zero, collectionViewLayout: layout)
+        collection.isScrollEnabled                           = true
+        collection.alwaysBounceVertical                      = true
+        collection.contentInset                              = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        
+        collection.allowsMultipleSelection                   = true
         collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.backgroundColor = .systemGray6
+        collection.backgroundColor                           = .systemGray6
+        collection.setCollectionViewLayout(layout, animated: true)
         return collection
     }()
-    lazy var CollectionView2: UICollectionView = {
-        
-        let layout = UICollectionViewFlowLayout()
-        layout.scrollDirection          = .vertical
-        layout.minimumLineSpacing       = 8
-        layout.minimumInteritemSpacing  = 8
-        let cardSize                    = (view.bounds.size.width / 2) - 12;
-        layout.itemSize                 = CGSize(width: cardSize, height: cardSize)
-        
-        let collection                  = UICollectionView(frame: .zero, collectionViewLayout: layout)
-        collection.isScrollEnabled      = true
-        collection.alwaysBounceVertical = true
-        collection.contentInset         = UIEdgeInsets(top: 8, left: 16, bottom: 8, right: 16)
-        collection.setCollectionViewLayout(layout, animated: true)
-        collection.allowsMultipleSelection = true
-        collection.translatesAutoresizingMaskIntoConstraints = false
-        collection.heightAnchor.constraint(equalToConstant: 50).isActive = true
-        collection.backgroundColor = .systemGray3
-        return collection
-    }()
-    
- 
- 
+  
     override func viewDidLoad() {
         super.viewDidLoad()
         self.hideKeyboardWhenTappedAround()
-        viewModels = realm.fetchCovid19Data()
+        (collectionItemsVM, marqueeVM) = realm.fetchCovid19Data()
         setupView()
         setupConstraints()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.viewModels = realm.render()
+        self.collectionItemsVM = realm.render().countries
         self.collectionView.reloadData()
     }
     
@@ -134,9 +117,19 @@ class HomeViewController: UIViewController {
         view.addSubview(scrollView)
         scrollView.addSubview(scrollViewContainer)
         scrollViewContainer.addArrangedSubview(tabBar)
-        scrollViewContainer.addArrangedSubview(CollectionView2)
+        scrollViewContainer.addArrangedSubview(worldTotalMarqueeLabel)
         scrollViewContainer.addArrangedSubview(collectionView)
-
+        
+        //marquee label
+        MarqueeLabel.controllerLabelsLabelize(self)
+        worldTotalMarqueeLabel.labelize = false
+        worldTotalMarqueeLabel.isHidden = true
+        
+        if marqueeVM.TotalConfirmed != nil,
+           marqueeVM.TotalDeaths    != nil {
+            worldTotalMarqueeLabel.text = "Total Confirmed: \(marqueeVM.TotalConfirmed!) Total Deaths: \(marqueeVM.TotalDeaths!)"
+        }
+        
         //collection
         collectionView.delegate            = self
         collectionView.dataSource          = self
@@ -149,7 +142,7 @@ class HomeViewController: UIViewController {
             target: self,
             action: #selector(tappedSort)
         )
-        arrowUpDown.tintColor = UIColor.systemIndigo
+        arrowUpDown.tintColor = .systemBlue
         navigationItem.titleView           = searchBar
         searchBar.delegate                 = self
         navigationItem.rightBarButtonItems = [arrowUpDown]
@@ -163,7 +156,6 @@ class HomeViewController: UIViewController {
         scrollViewContainer.pin(to: scrollView)
         
         NSLayoutConstraint.activate([
-            // this is important for scrolling
             scrollViewContainer.widthAnchor.constraint(equalTo: scrollView.widthAnchor),
             scrollViewContainer.heightAnchor.constraint(equalTo: scrollView.heightAnchor)
         ])
@@ -171,8 +163,7 @@ class HomeViewController: UIViewController {
     
     //nav button function
     @objc func tappedSort(){
-        print("tap")
-        self.viewModels = realm.sortByAscDesc(bool: isAscending)
+        self.collectionItemsVM = realm.sortByAscDesc(bool: isAscending)
         self.collectionView.reloadData()
         self.isAscending.toggle()
     }
@@ -183,13 +174,13 @@ class HomeViewController: UIViewController {
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isSearch ? filterViewModels.count : viewModels.count
+        return isSearch ? filterViewModels.count : collectionItemsVM.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionCell.identifier, for: indexPath) as! HomeCollectionCell
         
-        let country = isSearch ? filterViewModels[indexPath.item] : viewModels[indexPath.item]
+        let country = isSearch ? filterViewModels[indexPath.item] : collectionItemsVM[indexPath.item]
         
         cell.country = country
         
@@ -210,7 +201,7 @@ extension HomeViewController: UIScrollViewDelegate {
                     .preferredFramesPerSecond60
                 ], animations: {
                     self.navigationController?.setNavigationBarHidden(true, animated: true)
-                    
+                    self.worldTotalMarqueeLabel.isHidden = false
                     self.tabBar.isHidden = true
                     
             })
@@ -224,7 +215,7 @@ extension HomeViewController: UIScrollViewDelegate {
                     .preferredFramesPerSecond60
                 ], animations: {
                     self.navigationController?.setNavigationBarHidden(false, animated: true)
-                    
+                    self.worldTotalMarqueeLabel.isHidden = true
                     self.tabBar.isHidden = false
             })
         }
@@ -245,7 +236,7 @@ extension HomeViewController: UISearchBarDelegate {
         
         searchBar.resignFirstResponder()
 
-        filterViewModels = viewModels.filter({
+        filterViewModels = collectionItemsVM.filter({
             $0.name.contains(text)
         })
 
@@ -268,14 +259,13 @@ extension UIViewController {
 
 extension HomeViewController: MDCTabBarViewDelegate {
  
-
     func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         switch item.title {
             case "All":
-                self.viewModels = realm.sortByAscDesc(bool: true)
+                self.collectionItemsVM = realm.sortByAscDesc(bool: true)
                 self.collectionView.reloadData()
             case "Favorite":
-                self.viewModels = realm.filterFavorite()
+                self.collectionItemsVM = realm.filterFavorite()
                 self.collectionView.reloadData()
             case "Setting":
                 let destinationVC = SettingViewController()

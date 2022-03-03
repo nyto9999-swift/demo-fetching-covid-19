@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import MaterialComponents
 
 
 public extension UIView {
@@ -15,10 +16,31 @@ public extension UIView {
         topAnchor.constraint(equalTo: superView.topAnchor).isActive = true
         leadingAnchor.constraint(equalTo: superView.leadingAnchor).isActive = true
         trailingAnchor.constraint(equalTo: superView.trailingAnchor).isActive = true
-        bottomAnchor.constraint(equalTo: superView.bottomAnchor, constant: -20.0).isActive = true
+        bottomAnchor.constraint(equalTo: superView.bottomAnchor).isActive = true
+    }
+    func adaptiveColor() -> UIColor {
+        if self.traitCollection.userInterfaceStyle == .dark {
+            return UIColor.white
+        }
+        else {
+            return UIColor.darkText
+        }
     }
 }
+public extension UIViewController {
+    
+    func adaptiveColor() -> UIColor {
+        if self.traitCollection.userInterfaceStyle == .dark {
+            return UIColor.white
+        }
+        else {
+            return UIColor.darkText
+        }
+    }
+}
+
 
 enum RealmError: Error {
   case write
 }
+

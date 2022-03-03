@@ -19,6 +19,8 @@
 		8DC3B42627CA25A500523695 /* CountryViewModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42527CA25A500523695 /* CountryViewModels.swift */; };
 		8DC3B42827CA31F200523695 /* DatabaseService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42727CA31F200523695 /* DatabaseService.swift */; };
 		8DC3B42A27CBCFB800523695 /* SettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B42927CBCFB800523695 /* SettingViewController.swift */; };
+		8DC3B43227D1801F00523695 /* WorldTotal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B43127D1801F00523695 /* WorldTotal.swift */; };
+		8DC3B43427D1808D00523695 /* MarqueeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DC3B43327D1808D00523695 /* MarqueeViewModel.swift */; };
 		E8F233D68F39488FC33DA00A /* Pods_WebsocketProject.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */; };
 /* End PBXBuildFile section */
 
@@ -38,6 +40,8 @@
 		8DC3B42527CA25A500523695 /* CountryViewModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CountryViewModels.swift; sourceTree = "<group>"; };
 		8DC3B42727CA31F200523695 /* DatabaseService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseService.swift; sourceTree = "<group>"; };
 		8DC3B42927CBCFB800523695 /* SettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingViewController.swift; sourceTree = "<group>"; };
+		8DC3B43127D1801F00523695 /* WorldTotal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WorldTotal.swift; sourceTree = "<group>"; };
+		8DC3B43327D1808D00523695 /* MarqueeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MarqueeViewModel.swift; sourceTree = "<group>"; };
 		967CF177577F4CF678445928 /* Pods_WebsocketProject.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_WebsocketProject.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		A9DCBC7E9AF41BB58098FE66 /* Pods-WebsocketProject.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebsocketProject.release.xcconfig"; path = "Target Support Files/Pods-WebsocketProject/Pods-WebsocketProject.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -101,6 +105,7 @@
 			isa = PBXGroup;
 			children = (
 				8DC3B41927C8A7D600523695 /* Country.swift */,
+				8DC3B43127D1801F00523695 /* WorldTotal.swift */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -109,6 +114,7 @@
 			isa = PBXGroup;
 			children = (
 				8DC3B42527CA25A500523695 /* CountryViewModels.swift */,
+				8DC3B43327D1808D00523695 /* MarqueeViewModel.swift */,
 			);
 			path = ViewModel;
 			sourceTree = "<group>";
@@ -269,6 +275,8 @@
 				8D7C6D5D27C77F5D00AB231F /* AppDelegate.swift in Sources */,
 				8D7C6D5F27C77F5D00AB231F /* SceneDelegate.swift in Sources */,
 				8DC3B42A27CBCFB800523695 /* SettingViewController.swift in Sources */,
+				8DC3B43227D1801F00523695 /* WorldTotal.swift in Sources */,
+				8DC3B43427D1808D00523695 /* MarqueeViewModel.swift in Sources */,
 				8DC3B42827CA31F200523695 /* DatabaseService.swift in Sources */,
 				8DC3B41027C7E9CA00523695 /* UIView+Extensions.swift in Sources */,
 				8D7C6D7127C7A07C00AB231F /* HomeViewController.swift in Sources */,

@@ -1,12 +1,11 @@
 import UIKit
 import RealmSwift
 
-struct CountryViewModel {
+struct CollectionItemViewModel {
     var name: String
     var favorite: Int = 1
     var color: UIColor = .systemTeal
 
-    
     init(name: String, favorite: Int){
         var name = name
         
@@ -24,6 +23,7 @@ struct CountryViewModel {
         self.name = name
     }
 }
+
 
 
 

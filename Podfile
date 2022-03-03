@@ -11,6 +11,7 @@ pod 'MaterialComponents/Buttons+Theming'
 pod 'MaterialComponents/Buttons'
 pod 'MaterialComponents/Snackbar'
 pod 'MaterialComponents/Tabs+TabBarView'
+pod 'MarqueeLabel'
 pod 'Alamofire', '~> 5.5'
 pod 'RealmSwift', '~>10'
 end

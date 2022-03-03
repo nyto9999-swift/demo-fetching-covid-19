@@ -11,7 +11,7 @@ import MaterialComponents.MaterialContainerScheme
 
 class HomeCollectionCell: MDCCardCollectionCell {
     
-    var country: CountryViewModel! {
+    var country: CollectionItemViewModel! {
         didSet {
             cardButton1.setTitle(country.name, for: .normal)
             contentView.superview?.backgroundColor = country.color
@@ -34,7 +34,8 @@ class HomeCollectionCell: MDCCardCollectionCell {
         
         
         cardButton1.applyOutlinedTheme(withScheme: containerScheme)
-        cardButton1.setTitleColor(.systemIndigo, for: UIControl.State.normal)
+        cardButton1.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
+        
         cardButton1.titleLabel?.font = containerScheme.typographyScheme.body2
         cardButton1.contentHorizontalAlignment = .left
         cardButton1.titleLabel?.numberOfLines = 0
