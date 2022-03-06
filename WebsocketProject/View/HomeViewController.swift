@@ -1,21 +1,20 @@
 import UIKit
-import MaterialComponents.MaterialCards
-import MaterialComponents.MaterialCards_Theming
 import MaterialComponents.MaterialContainerScheme
 import MaterialComponents.MaterialTabs_TabBarView
 import RealmSwift
+import SwiftSpinner
 import MarqueeLabel
-
 
 class HomeViewController: UIViewController {
     
-    let realm             = DatabaseService.shared
-    var collectionItemsVM = [CollectionItemViewModel]()
-    var filterViewModels  = [CollectionItemViewModel]()
-    var marqueeVM         = MarqueeViewModel()
-    var isSearch: Bool    = false
-    var isAscending       = false
-    
+    let realm                       = DatabaseService.shared
+    var collectionItemsVMs          = [CollectionItemViewModel]()
+    var filteredCollectionItemsVMs  = [CollectionItemViewModel]()
+    var marqueeVM                   = MarqueeViewModel()
+    var isSearch: Bool              = false
+    var isAll                       = false
+    var isFavorite                  = false
+
     lazy var scrollView: UIScrollView = {
         let view = UIScrollView()
         view.translatesAutoresizingMaskIntoConstraints = false
@@ -42,21 +41,21 @@ class HomeViewController: UIViewController {
         return searchBar
     }()
     
-    lazy var tabBar: MDCTabBarView = {
+    lazy var topTabBarView: MDCTabBarView = {
        let tabBar                                       = MDCTabBarView()
        tabBar.items                                     = self.tabBarItems
        tabBar.tabBarDelegate                            = self
        tabBar.translatesAutoresizingMaskIntoConstraints = false
        tabBar.barTintColor                              = .systemGray6
-       tabBar.selectionIndicatorStrokeColor             = .systemIndigo
+       tabBar.selectionIndicatorStrokeColor             = .systemBlue
        tabBar.rippleColor                               = .systemGray4
        tabBar.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
-    
+       
        return tabBar
      }()
     
     lazy var tabBarItems: [UITabBarItem] = {
-      let itemTitles = ["All", "Favorite", "Setting"]
+      let itemTitles = ["全部", "收藏", "設定"]
       return itemTitles
         .enumerated()
         .map { (index, title) in
@@ -65,7 +64,9 @@ class HomeViewController: UIViewController {
     }()
     
     lazy var worldTotalMarqueeLabel: MarqueeLabel! = {
-        let title             = MarqueeLabel(frame: accessibilityFrame, duration: 8.0, fadeLength: 10.0)
+        let title             = MarqueeLabel(frame: accessibilityFrame,
+                                             duration: 8.0,
+                                             fadeLength: 10.0)
         title.type            = .continuous
         title.speed           = .duration(50.0)
         title.animationCurve  = .linear
@@ -83,13 +84,13 @@ class HomeViewController: UIViewController {
         layout.scrollDirection                               = .vertical
         layout.minimumLineSpacing                            = 8
         layout.minimumInteritemSpacing                       = 8
-        let cardSize                                         = (view.bounds.size.width / 2) - 12;
-        layout.itemSize                                      = CGSize(width: cardSize, height: cardSize)
+        let cardSize                                         = (view.bounds.size.width ) - 12;
+        layout.itemSize                                      = CGSize(width: cardSize, height: (cardSize / 3)-6)
         
         let collection                                       = UICollectionView(frame: .zero, collectionViewLayout: layout)
         collection.isScrollEnabled                           = true
         collection.alwaysBounceVertical                      = true
-        collection.contentInset                              = UIEdgeInsets(top: 8, left: 8, bottom: 8, right: 8)
+        collection.contentInset                              = UIEdgeInsets(top: 6, left: 0, bottom: 0, right: 0)
         
         collection.allowsMultipleSelection                   = true
         collection.translatesAutoresizingMaskIntoConstraints = false
@@ -97,26 +98,40 @@ class HomeViewController: UIViewController {
         collection.setCollectionViewLayout(layout, animated: true)
         return collection
     }()
-  
+ 
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        (self.collectionItemsVMs, self.marqueeVM) = self.realm.fetchTodayData()
         self.hideKeyboardWhenTappedAround()
-        (collectionItemsVM, marqueeVM) = realm.fetchCovid19Data()
         setupView()
         setupConstraints()
+        
+    }
+    override func viewDidAppear(_ animated: Bool) {
+        
+            self.collectionView.reloadData()
+        
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        self.collectionItemsVM = realm.render().countries
-        self.collectionView.reloadData()
+//        DispatchQueue.main.async {
+//
+//            (self.collectionItemsVMs, self.marqueeVM) = self.realm.fetchTodayData()
+//
+//            self.collectionView.reloadData()
+//        }
+        
     }
+    
+ 
     
     func setupView(){
         
         view.addSubview(scrollView)
         scrollView.addSubview(scrollViewContainer)
-        scrollViewContainer.addArrangedSubview(tabBar)
+        scrollViewContainer.addArrangedSubview(topTabBarView)
         scrollViewContainer.addArrangedSubview(worldTotalMarqueeLabel)
         scrollViewContainer.addArrangedSubview(collectionView)
         
@@ -147,8 +162,11 @@ class HomeViewController: UIViewController {
         searchBar.delegate                 = self
         navigationItem.rightBarButtonItems = [arrowUpDown]
         
-        //tab bar
-        tabBar.setSelectedItem(tabBarItems[0], animated: true)
+        //top tab bar
+        topTabBarView.setSelectedItem(tabBarItems[0], animated: true)
+        
+        //bottom tab bar
+    
     }
 
     func setupConstraints(){
@@ -163,24 +181,35 @@ class HomeViewController: UIViewController {
     
     //nav button function
     @objc func tappedSort(){
-        self.collectionItemsVM = realm.sortByAscDesc(bool: isAscending)
+        
+        //sort 全部
+        if self.topTabBarView.selectedItem == tabBarItems[0] {
+            self.collectionItemsVMs = realm.sort(isAscending: isAll)
+            self.isAll.toggle()
+        }
+        
+        //sort 收藏
+        else if self.topTabBarView.selectedItem == tabBarItems[1] {
+            self.collectionItemsVMs = realm.sortFavorite(isAscending: isFavorite)
+            self.isFavorite.toggle()
+        }
+        
+        
         self.collectionView.reloadData()
-        self.isAscending.toggle()
     }
-    
-    
 }
 
+//MARK: collection delegate
 extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelegate {
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return isSearch ? filterViewModels.count : collectionItemsVM.count
+        return isSearch ? filteredCollectionItemsVMs.count : collectionItemsVMs.count
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: HomeCollectionCell.identifier, for: indexPath) as! HomeCollectionCell
         
-        let country = isSearch ? filterViewModels[indexPath.item] : collectionItemsVM[indexPath.item]
+        let country = isSearch ? filteredCollectionItemsVMs[indexPath.item] : collectionItemsVMs[indexPath.item]
         
         cell.country = country
         
@@ -188,6 +217,7 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
 }
 
+//MARK: scroll hiding
 extension HomeViewController: UIScrollViewDelegate {
     func scrollViewDidScroll(_ scrollView: UIScrollView) {
         let pan = scrollView.panGestureRecognizer
@@ -202,7 +232,7 @@ extension HomeViewController: UIScrollViewDelegate {
                 ], animations: {
                     self.navigationController?.setNavigationBarHidden(true, animated: true)
                     self.worldTotalMarqueeLabel.isHidden = false
-                    self.tabBar.isHidden = true
+                    self.topTabBarView.isHidden = true
                     
             })
             
@@ -216,12 +246,13 @@ extension HomeViewController: UIScrollViewDelegate {
                 ], animations: {
                     self.navigationController?.setNavigationBarHidden(false, animated: true)
                     self.worldTotalMarqueeLabel.isHidden = true
-                    self.tabBar.isHidden = false
+                    self.topTabBarView.isHidden = false
             })
         }
     }
 }
 
+//MARK: search bar delegate
 extension HomeViewController: UISearchBarDelegate {
     func searchBar(_ searchBar: UISearchBar, textDidChange searchText: String) {
         
@@ -236,7 +267,7 @@ extension HomeViewController: UISearchBarDelegate {
         
         searchBar.resignFirstResponder()
 
-        filterViewModels = collectionItemsVM.filter({
+        filteredCollectionItemsVMs = collectionItemsVMs.filter({
             $0.name.contains(text)
         })
 
@@ -245,6 +276,7 @@ extension HomeViewController: UISearchBarDelegate {
     }
 }
 
+//MARK: keyboard hide
 extension UIViewController {
     func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(UIViewController.dismissKeyboard))
@@ -257,17 +289,18 @@ extension UIViewController {
     }
 }
 
+//MARK: Tab bar delegate
 extension HomeViewController: MDCTabBarViewDelegate {
  
     func tabBarView(_ tabBarView: MDCTabBarView, didSelect item: UITabBarItem) {
         switch item.title {
-            case "All":
-                self.collectionItemsVM = realm.sortByAscDesc(bool: true)
+            case "全部":
+                self.collectionItemsVMs = realm.sort(isAscending: true)
                 self.collectionView.reloadData()
-            case "Favorite":
-                self.collectionItemsVM = realm.filterFavorite()
+            case "收藏":
+                self.collectionItemsVMs = realm.sortFavorite(isAscending: true)
                 self.collectionView.reloadData()
-            case "Setting":
+            case "設定":
                 let destinationVC = SettingViewController()
                 self.navigationController?.pushViewController(destinationVC, animated: true)
             case .none:

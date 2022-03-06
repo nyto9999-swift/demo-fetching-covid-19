@@ -2,11 +2,13 @@ import UIKit
 import RealmSwift
 
 struct CollectionItemViewModel {
-    var name: String
-    var favorite: Int = 1
-    var color: UIColor = .systemTeal
+    var name           : String
+    var cases          : String
+    var deaths         : String
+    var favorite       : Int     = 1
+    var cellBgColor    : UIColor = .systemGray5
 
-    init(name: String, favorite: Int){
+    init(name: String, cases: String, deaths: String, favorite: Int){
         var name = name
         
         
@@ -15,12 +17,10 @@ struct CollectionItemViewModel {
             name.removeSubrange(rex.lowerBound..<name.endIndex)
         }
         
-        if favorite == 0 {
-            self.favorite = 0
-            self.color = .systemGray5
-        }
-        
-        self.name = name
+        self.favorite = favorite
+        self.name     = name
+        self.cases    = "確診：\(cases)"
+        self.deaths   = "死亡：\(deaths)"
     }
 }
 

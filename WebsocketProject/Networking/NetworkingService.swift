@@ -4,7 +4,7 @@ import Alamofire
 final class NetworkingService {
     static let shared = NetworkingService()
     
-    func fetchWorldTotal(url: String, completion: @escaping (Result<WorldTotal, Error>) -> Void) {
+    func fetchWorldTotalJson(url: String, completion: @escaping (Result<WorldTotal, Error>) -> Void) {
         AF.request(url)
             .validate()
             .responseDecodable(of: WorldTotal.self) { (response) in
@@ -19,20 +19,29 @@ final class NetworkingService {
             }
     }
     
-    func fetchCovid19Json(url: String, completion: @escaping (Result<[Country], Error>) -> Void) {
-        AF.request(url)
-            .validate()
-            .responseDecodable(of: [Country].self) { (response) in
-                
-                switch response.result {
-                    case .success(let countries):
-                        
-                        completion(.success(countries))
+    func downloadCsv(url: String, completion: @escaping (Result<URL, Error>) -> Void){
         
-                    case .failure(let error):
-                        completion(.failure(error))
-                }
+        let destination = DownloadRequest.suggestedDownloadDestination(for: .documentDirectory)
+
+
+        let documentsPath = NSSearchPathForDirectoriesInDomains(.documentDirectory,.userDomainMask,true)[0] as NSString
+        let destinationPath = documentsPath.appendingPathComponent("covid19_global_cases_and_deaths.csv")
+        try? FileManager.default.removeItem(atPath: destinationPath)
+        
+        
+        AF.download(url, to: destination)
+            .validate()
+            .responseURL { response in
+            switch response.result {
+                case .success(let url):
+                    completion(.success(url))
+                case .failure(let error):
+                    
+                    completion(.failure(error))
+                 
+                    
             }
+        }
     }
 
 }

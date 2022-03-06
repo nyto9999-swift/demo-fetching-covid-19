@@ -13,34 +13,27 @@ class HomeCollectionCell: MDCCardCollectionCell {
     
     var country: CollectionItemViewModel! {
         didSet {
-            cardButton1.setTitle(country.name, for: .normal)
-            contentView.superview?.backgroundColor = country.color
+            nameButton.setTitle(country.name, for: .normal)
+            casesButton.setTitle(country.cases, for: .normal)
+            deathButton.setTitle(country.deaths, for: .normal)
+            nameButton.tintColor = adaptiveColor()
+            contentView.superview?.backgroundColor = country.cellBgColor
         }
     }
 
-    let cardButton1: MDCButton    = MDCButton()
+    let nameButton: MDCButton     = MDCButton()
+    let casesButton: MDCButton    = MDCButton()
+    let deathButton: MDCButton    = MDCButton()
+
     let containerScheme           = MDCContainerScheme()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        setUpCard()
+        setupViews()
     }
     
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func setUpCard() {
-        
-        
-        cardButton1.applyOutlinedTheme(withScheme: containerScheme)
-        cardButton1.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
-        
-        cardButton1.titleLabel?.font = containerScheme.typographyScheme.body2
-        cardButton1.contentHorizontalAlignment = .left
-        cardButton1.titleLabel?.numberOfLines = 0
-        cardButton1.titleLabel?.lineBreakMode = NSLineBreakMode.byWordWrapping
-        contentView.layer.cornerRadius = 8
+    func setupViews() {
+        self.layer.cornerRadius         = 8
         self.applyTheme(withScheme: containerScheme)
         self.setNeedsLayout()
         self.layoutIfNeeded()
@@ -49,20 +42,67 @@ class HomeCollectionCell: MDCCardCollectionCell {
             y: frame.minY,
             width: self.intrinsicContentSize.width,
             height: self.intrinsicContentSize.height)
+        
+        nameButton.applyOutlinedTheme(withScheme: containerScheme)
+        nameButton.setTitleColor(.systemBlue, for: UIControl.State.normal)
+        nameButton.isUserInteractionEnabled   = false
+        nameButton.adjustsFontForContentSizeCategoryWhenScaledFontIsUnavailable = true
+        nameButton.titleLabel?.font           = UIFont(name: "maximum", size: 3000.0)
+        nameButton.contentHorizontalAlignment = .left
+        nameButton.titleLabel?.numberOfLines  = 0
+        nameButton.titleLabel?.lineBreakMode  = NSLineBreakMode.byWordWrapping
+        
+        casesButton.applyOutlinedTheme(withScheme: containerScheme)
+        casesButton.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
+        casesButton.isUserInteractionEnabled   = false
+        casesButton.titleLabel?.font           = containerScheme.typographyScheme.body2
+        casesButton.contentHorizontalAlignment = .left
+        casesButton.titleLabel?.numberOfLines  = 0
+        casesButton.titleLabel?.lineBreakMode  = NSLineBreakMode.byWordWrapping
+        
+        
+        deathButton.applyOutlinedTheme(withScheme: containerScheme)
+        deathButton.setTitleColor(adaptiveColor(), for: UIControl.State.normal)
+        deathButton.isUserInteractionEnabled   = false
+        deathButton.titleLabel?.font           = containerScheme.typographyScheme.body2
+        deathButton.contentHorizontalAlignment = .left
+        deathButton.titleLabel?.numberOfLines  = 0
+        deathButton.titleLabel?.lineBreakMode  = NSLineBreakMode.byWordWrapping
+
     }
 
     override func layoutSubviews() {
         super.layoutSubviews()
-        if cardButton1.superview == nil { addSubview(cardButton1) }
+        if nameButton.superview == nil { addSubview(nameButton) }
+        if casesButton.superview == nil { addSubview(casesButton) }
+        if deathButton.superview == nil { addSubview(deathButton) }
+
+        nameButton.sizeToFit()
+        casesButton.sizeToFit()
+        deathButton.sizeToFit()
+
         
-        cardButton1.sizeToFit()
-        
-        cardButton1.frame = CGRect(
+        nameButton.frame = CGRect(
             x: 6,
             y: 6,
             width: frame.width-12,
             height: 48)
+        
+        casesButton.frame = CGRect(
+            x: nameButton.frame.minX,
+            y: nameButton.frame.maxY+6,
+            width: (frame.width / 2)-9,
+            height: 48)
+        
+        deathButton.frame = CGRect(
+            x: casesButton.frame.maxX+6,
+            y: nameButton.frame.maxY+6,
+            width: (frame.width / 2)-9,
+            height: 48)
     }
     
     static let identifier = "collectionItem"
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
 }

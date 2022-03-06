@@ -1,57 +1,77 @@
 import UIKit
 import RealmSwift
+import SwiftCSV
+
 
 final class DatabaseService {
     
     static let shared = DatabaseService()
     let realm = try! Realm()
     var collectionItemVMs = [CollectionItemViewModel]()
-    var marqueeVM = MarqueeViewModel()
     
-    public func fetchCovid19Data() -> (countries: [CollectionItemViewModel], worldTotal: MarqueeViewModel) {
-        
-        
-//        deletes(withTypes: [Country.self])
-        // if not today data, api call.....
+    
+    public func fetchTodayData() -> (countries: [CollectionItemViewModel], worldTotal: MarqueeViewModel) {
         
         if !todayData() {
             
-            delete(objectType: WorldTotal.self)
-            deletes(withTypes: [Country.self])
-
-            print("fetching. world total")
-            NetworkingService.shared.fetchWorldTotal(url: "https://api.covid19api.com/world/total", completion: { [weak self] result in
-                
+            NetworkingService.shared.downloadCsv(url: "https://od.cdc.gov.tw/eic/covid19/covid19_global_cases_and_deaths.csv", completion:  { [weak self] result in
                 switch result {
+                    case .success(let url):
+ 
+                        do {
+                            try self?.loadCSVThenSaveInDB(url: url)
+                        }
+                        catch {
+                            print("load csv error")
+                        }
                         
-                    case .success(let worldTotal):
-                        self?.save(object: worldTotal)
-                    case .failure(_):
-                        print("alamofire fail worldTotal")
+                    case .failure(let error):
+                        print(error)
                 }
             })
             
-            NetworkingService.shared.fetchCovid19Json(url: "https://api.covid19api.com/countries", completion: { [weak self] result in
-                
+            NetworkingService.shared.fetchWorldTotalJson(url: "https://api.covid19api.com/world/total") { [weak self] result in
                 switch result {
                         
-                    case .success(let countries):
-                        self?.saves(objects: countries)
-                    case .failure(_):
-                        print("alamofire fail")
+                    case .success(let wordTotal):
+                        self?.saveInDB(object: wordTotal)
+                    case .failure(let error):
+                        print(error)
                 }
-            })
+            }
+            
         }
-    
+        
+        
         print("Realm Path : \(realm.configuration.fileURL?.absoluteURL)")
-        return render()
+        return loadDB()
+    }
+    func loadCSVThenSaveInDB(url: URL) throws {
+        
+        deletes(withTypes: [Country.self])
+        delete(objectType: Timestamp.self)
+
+        //["country_ch", "country_en", "cases", "deaths"]
+        let csv: CSV = try CSV(url: url)
+        self.realm.beginWrite()
+
+        let today = Timestamp()
+        self.realm.add(today)
+        
+        try! csv.enumerateAsDict { dict in
+            self.savesInDB(countryData: dict)
+            
+        }
+        
+        self.incrementCountryID()
+        
+        try! self.realm.commitWrite()
     }
     
-    
     //MARK: Save
-    func save(object: Object) {
+    func saveInDB(object: Object) {
         
-        deletes(withTypes: [WorldTotal.self])
+        delete(objectType: WorldTotal.self)
         
         realm.beginWrite()
         
@@ -60,15 +80,22 @@ final class DatabaseService {
         try! realm.commitWrite()
     }
     
-    func saves(objects: [Object]) {
+    func savesInDB(countryData: [String:String]) {
+
+        let country = Country()
         
-        realm.beginWrite()
-        
-        objects.forEach {realm.add($0)}
-        
-        incrementCountryID()
-       
-        try! realm.commitWrite()
+        if let en     = countryData["country_en"],
+           let ch     = countryData["country_ch"],
+           let cases  = countryData["cases"],
+           let deaths = countryData["deaths"]
+        {
+            country.country_en = en
+            country.country_ch = ch
+            country.cases      = cases
+            country.deaths     = deaths
+            country.favorite   = 1
+        }
+            realm.add(country)
     }
     
     func storeSetting(iPath: [IndexPath]) throws {
@@ -92,12 +119,12 @@ final class DatabaseService {
     }
     
     func incrementCountryID(){
-        let countries = realm.objects(Country.self).sorted(byKeyPath: "name", ascending: true)
+        let countries = realm.objects(Country.self)
         
         var id = 0
     
         countries.forEach {
-            let country = realm.objects(Country.self).filter("name = %@", $0.name)
+            let country = realm.objects(Country.self).filter("country_en = %@", $0.country_en)
             if let country = country.first {
                 country.id = id
                 id += 1
@@ -106,29 +133,16 @@ final class DatabaseService {
     }
     
     //MARK: Read
-    func render() -> (countries: [CollectionItemViewModel], worldTotal: MarqueeViewModel)  {
+    func loadDB() -> (countries: [CollectionItemViewModel], worldTotal: MarqueeViewModel)  {
         
-        let countryObjects = realm.objects(Country.self)
-        let worldTotalObject = realm.objects(WorldTotal.self)
-        
-        // first time run the app
-        if countryObjects.isEmpty || countryObjects.count == 0 {
-            collectionItemVMs = sortById()
-            print("first time.. sort by name")
+        var marqueeVM = MarqueeViewModel()
+        collectionItemVMs = sort(isAscending: true)
+
+        if let worldTotalObject = realm.objects(WorldTotal.self).first {
+            marqueeVM.TotalConfirmed = worldTotalObject.TotalConfirmed
+            marqueeVM.TotalDeaths = worldTotalObject.TotalDeaths
         }
         
-        // not first time to run the app
-        else{
-            collectionItemVMs = sortByAscDesc(bool: true)
-            print("not first time... sort by id")
-        }
-        
-        
-        if !worldTotalObject.isEmpty || worldTotalObject.count != 0 {
-            
-            marqueeVM.TotalConfirmed = worldTotalObject.first!.TotalConfirmed
-            marqueeVM.TotalDeaths = worldTotalObject.first!.TotalDeaths
-        }
         return (collectionItemVMs, marqueeVM)
     }
     
@@ -151,56 +165,45 @@ final class DatabaseService {
  
     //MARK: Sort
     
-    func sortById() -> [CollectionItemViewModel] {
+    func sort(isAscending: Bool?) -> [CollectionItemViewModel] {
         collectionItemVMs = []
         
-        let countries = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: true)
+        let countries = realm.objects(Country.self).sorted(byKeyPath: "id", ascending: isAscending ?? true)
         
-        countries.forEach {collectionItemVMs.append(CollectionItemViewModel(name: $0.name, favorite: $0.favorite))}
+        countries.forEach {
+            collectionItemVMs.append(CollectionItemViewModel(name: $0.country_ch, cases: $0.cases, deaths: $0.deaths, favorite: $0.favorite))
+        }
         
         return collectionItemVMs
     }
     
-    func sortByAscDesc(bool: Bool) -> [CollectionItemViewModel] {
+    func sortFavorite(isAscending: Bool?) -> [CollectionItemViewModel] {
         collectionItemVMs = []
         
-        let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: bool), SortDescriptor(keyPath: "id", ascending: bool)]
         
-        let countries = realm.objects(Country.self).sorted(by: sortProperties)
-        
-        
-        countries.forEach {collectionItemVMs.append(CollectionItemViewModel(name: $0.name, favorite: $0.favorite))}
-        
-        return collectionItemVMs
-    }
-    
-    func filterFavorite() -> [CollectionItemViewModel] {
-        collectionItemVMs = []
-        let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: true), SortDescriptor(keyPath: "id", ascending: true)]
-        
+        let sortProperties = [SortDescriptor(keyPath: "favorite", ascending: isAscending ?? true), SortDescriptor(keyPath: "id", ascending: isAscending ?? true)]
         
         let countries = realm.objects(Country.self).sorted(by: sortProperties).filter("favorite = 0")
         
-        countries.forEach {collectionItemVMs.append(CollectionItemViewModel(name: $0.name, favorite: $0.favorite))}
+        countries.forEach {collectionItemVMs.append(CollectionItemViewModel(name: $0.country_ch, cases: $0.cases, deaths: $0.deaths, favorite: $0.favorite))}
         
         return collectionItemVMs
     }
     
     //MARK: Others
     func todayData() -> Bool {
-        let countryObjects = realm.objects(Country.self)
-        let todayStart = Calendar.current.startOfDay(for: Date())
-        let todayEnd: Date = {
-            let components = DateComponents(day: 1, second: -1)
-            return Calendar.current.date(byAdding: components, to: todayStart)!
-        }()
-        let today = realm.objects(WorldTotal.self).filter("timestamp BETWEEN %@", [todayStart, todayEnd])
-        if today.count == 0 || today.isEmpty ||
-            countryObjects.count == 0 || countryObjects.isEmpty{
+        let today = startDayAndEndDay()
+        
+        let timestamp = realm.objects(Timestamp.self).filter("today BETWEEN %@", [today.start, today.end])
+        
+        if timestamp.count == 0 ||
+           timestamp.isEmpty
+        {
+            print("not today")
             return false
-        }else {
-            return true
         }
+        print("today")
+        return true
     }
 }
 
@@ -213,13 +216,6 @@ extension DatabaseService {
         let yesterdayDateFormatter = dateFormatter.string(from: Date().dayBefore)
         let yesterday = "\(yesterdayDateFormatter)Z"
         return yesterday
-    }
-    
-    func reomveTimeFrom(date: Date) -> Date {
-        let components = Calendar.current.dateComponents([.year, .month, .day], from: date)
-        let date = Calendar.current.date(from: components)
-        
-        return date!
     }
 }
 

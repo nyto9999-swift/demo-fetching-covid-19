@@ -18,7 +18,8 @@ class SettingViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        countryVMs = db.sortById()
+    
+        countryVMs = db.sort(isAscending: true)
         setup()
     }
     
@@ -41,28 +42,29 @@ class SettingViewController: UIViewController {
         //snack bar
         snackMessage.text = ""
         snackMessage.enableRippleBehavior = true
-        MDCSnackbarManager.default.snackbarMessageViewBackgroundColor = .systemPurple
+        MDCSnackbarManager.default.snackbarMessageViewBackgroundColor = .systemBlue
         
     }
     
     @objc func save() {
         if let selectedRows = tableView.indexPathsForSelectedRows {
             
-            do {
-                try db.storeSetting(iPath: selectedRows)
-                self.snackMessage.text = "更新成功"
-                self.countryVMs = self.db.sortById()
-                self.tableView.reloadData()
-            
-            }
-            catch RealmError.write {
-                self.snackMessage.text = "更新失敗"
-            }
-            catch {
-                print("我是誰")
-            }
-
             DispatchQueue.main.async {
+                
+                do {
+                    try self.db.storeSetting(iPath: selectedRows)
+                    self.snackMessage.text = "更新成功"
+                    self.countryVMs = self.db.sort(isAscending: true)
+                    self.tableView.reloadData()
+                
+                }
+                catch RealmError.write {
+                    self.snackMessage.text = "更新失敗"
+                }
+                catch {
+                    print("我是誰")
+                }
+
                 MDCSnackbarManager.default.show(self.snackMessage)
             }
         }
